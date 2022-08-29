@@ -40,25 +40,25 @@ ENV BUILD_ENV ${BUILD_ENVIRONMENT}
 
 
 
-COPY ./control/beat /start-beat
-RUN sed -i 's/\r$//g' /start-beat
-RUN chmod +x /start-beat
+# COPY ./control/beat /start-beat
+# RUN sed -i 's/\r$//g' /start-beat
+# RUN chmod +x /start-beat
 
-COPY ./control/flower /start-flower
-RUN sed -i 's/\r$//g' /start-flower
-RUN chmod +x /start-flower
+# COPY ./control/flower /start-flower
+# RUN sed -i 's/\r$//g' /start-flower
+# RUN chmod +x /start-flower
 
-COPY ./control/worker1 /start-worker1
-RUN sed -i 's/\r$//g' /start-worker1
-RUN chmod +x /start-worker1
+# COPY ./control/worker1 /start-worker1
+# RUN sed -i 's/\r$//g' /start-worker1
+# RUN chmod +x /start-worker1
 
-COPY ./control/worker2 /start-worker2
-RUN sed -i 's/\r$//g' /start-worker2
-RUN chmod +x /start-worker2
+# COPY ./control/worker2 /start-worker2
+# RUN sed -i 's/\r$//g' /start-worker2
+# RUN chmod +x /start-worker2
 
-COPY ./control/worker3 /start-worker3
-RUN sed -i 's/\r$//g' /start-worker3
-RUN chmod +x /start-worker3
+# COPY ./control/worker3 /start-worker3
+# RUN sed -i 's/\r$//g' /start-worker3
+# RUN chmod +x /start-worker3
 
 
 
