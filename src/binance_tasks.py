@@ -71,34 +71,34 @@ def get_klines_all_symbols():
         time.sleep(1)
         
         # start kline test sockets
-        ws_client1.kline("BTCBUSD", id=251,interval='1m', callback=kline_message_collector)
-        time.sleep(0.25)
-        # ws_client1.kline("ETHBTC", id=3,interval='1m', callback=kline_message_collector)
+        # ws_client1.kline("BTCBUSD", id=251,interval='1m', callback=kline_message_collector)
         # time.sleep(0.25)
-        # ws_client1.kline("BNBBTC", id=4,interval='1m', callback=kline_message_collector)
+        # ws_client2.kline("ETHBTC", id=3,interval='1m', callback=kline_message_collector)
         # time.sleep(0.25)
-        # ws_client1.kline("BNBETH", id=5,interval='1m', callback=kline_message_collector)
+        # ws_client2.kline("BNBBTC", id=4,interval='1m', callback=kline_message_collector)
         # time.sleep(0.25)
-        # ws_client1.kline("PAXGBTC", id=6,interval='1m', callback=kline_message_collector)
+        # ws_client2.kline("BNBETH", id=5,interval='1m', callback=kline_message_collector)
         # time.sleep(0.25)
-        # ws_client1.kline("CAKEBTC", id=7,interval='1m', callback=kline_message_collector)
+        # ws_client2.kline("PAXGBTC", id=6,interval='1m', callback=kline_message_collector)
         # time.sleep(0.25)
-        # ws_client1.kline("ADABTC", id=8,interval='1m', callback=kline_message_collector)
+        # ws_client2.kline("CAKEBTC", id=7,interval='1m', callback=kline_message_collector)
         # time.sleep(0.25)
-        # ws_client1.kline("DOTBTC", id=9,interval='1m', callback=kline_message_collector)
+        # ws_client2.kline("ADABTC", id=8,interval='1m', callback=kline_message_collector)
         # time.sleep(0.25)
-        # ws_client1.kline("SOLBTC", id=10,interval='1m', callback=kline_message_collector)
+        # ws_client2.kline("DOTBTC", id=9,interval='1m', callback=kline_message_collector)
         # time.sleep(0.25)
-        # ws_client1.kline("MATICBTC", id=11,interval='1m', callback=kline_message_collector)
+        # ws_client2.kline("SOLBTC", id=10,interval='1m', callback=kline_message_collector)
         # time.sleep(0.25)
-        # ws_client1.kline("ATOMBTC", id=12,interval='1m', callback=kline_message_collector)
+        # ws_client2.kline("MATICBTC", id=11,interval='1m', callback=kline_message_collector)
         # time.sleep(0.25)
-        # ws_client1.kline("LINKBTC", id=13,interval='1m', callback=kline_message_collector)
+        # ws_client2.kline("ATOMBTC", id=12,interval='1m', callback=kline_message_collector)
         # time.sleep(0.25)
-        ws_client1.kline("ETHBUSD", id=252,interval='1m', callback=kline_message_collector)
-        time.sleep(0.25)
-        ws_client1.kline("BNBBUSD", id=253,interval='1m', callback=kline_message_collector)
-        time.sleep(0.25)
+        # ws_client2.kline("LINKBTC", id=13,interval='1m', callback=kline_message_collector)
+        # time.sleep(0.25)
+        # ws_client1.kline("ETHBUSD", id=252,interval='1m', callback=kline_message_collector)
+        # time.sleep(0.25)
+        # ws_client1.kline("BNBBUSD", id=253,interval='1m', callback=kline_message_collector)
+        # time.sleep(0.25)
         # ws_client1.kline("BTCUSDT", id=16,interval='1m', callback=kline_message_collector)
         # time.sleep(0.25)
         # ws_client1.kline("ETHUSDT", id=17,interval='1m', callback=kline_message_collector)
@@ -176,7 +176,17 @@ def get_klines_all_symbols():
         ws_client3.stop()
         time.sleep(1)
         ws_client4.stop() # logging.debug("closing ws connection")
-
+    except:
+        print('Ticker ERROR')
+        print('Ticker ERROR')
+        print('Ticker ERROR')
+        print('Ticker ERROR')
+        print('Ticker ERROR')
+        print('Ticker ERROR')
+        print('Ticker ERROR')
+        print('Ticker ERROR')
+        print('Ticker ERROR')
+        print('Ticker ERROR')
    
 @app.task
 def miniticker_message_handler(message):
@@ -185,6 +195,7 @@ def miniticker_message_handler(message):
     # print(len(message))
     try:
         for tick in message:
+            # print(tick)
             if tick['e'] == '24hrMiniTicker':
                 try:
                     symbol = dict(json.loads(r.get("market" + tick["s"])))
@@ -221,6 +232,7 @@ def miniticker_message_handler(message):
 def kline_message_collector(message):
     '''process incoming ticker message'''
     # Collect multiple messages and send to task
+    # print(message)
     if len(collected_tickers) < 10:
         collected_tickers.append(message)
         # print(len(collected_tickers))
