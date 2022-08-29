@@ -1,3 +1,3 @@
 #!/bin/bash
 
-vcelery -A src beat
+celery -A src beat
