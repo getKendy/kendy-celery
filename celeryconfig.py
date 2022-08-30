@@ -1,5 +1,9 @@
-broker_url = 'redis://localhost:6379/0'
-result_backend = 'redis://localhost:6379/1'
+import os
+
+broker_url = os.environ.get('CELERY_BROKER_URL')
+result_backend = os.environ.get('CELERY_RESULT_BACKEN')
+# broker_url = 'redis://redis:6379/1'
+# result_backend = 'redis://redis:6379/2'
 
 task_serializer = 'json'
 result_serializer = 'json'
