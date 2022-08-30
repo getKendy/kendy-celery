@@ -86,80 +86,79 @@ def process_alert_ticker_data(ticker_data,volume_24h,timeframe,resample_frame):
         )
         # print(df.tail(n=20))
        
-        if (
-            float(df.iloc[-2, df.columns.get_loc("close")])
-            < float(df.iloc[-2, df.columns.get_loc("BBL_20_2.0")])
-            and float(df.iloc[-2, df.columns.get_loc("BBB_20_2.0")]) >= 0.5    # min % BB width
-        ):
+        # if (
+        #     float(df.iloc[-2, df.columns.get_loc("close")])
+        #     < float(df.iloc[-2, df.columns.get_loc("BBL_20_2.0")])
+        #     and float(df.iloc[-2, df.columns.get_loc("BBB_20_2.0")]) >= 0.5    # min % BB width
+        # ):
             # help(ta.stoch)
-            df.ta.stoch(
-                high=df["high"],
-                low=df["low"],
-                smooth_k=1,
-                cumulative=True,
-                append=True,
-            )
+        df.ta.stoch(
+            high=df["high"],
+            low=df["low"],
+            smooth_k=1,
+            cumulative=True,
+            append=True,
+        )
             
             # print(df.tail(n=20))
             
-            if float(df.iloc[-2, df.columns.get_loc("STOCHk_14_3_1")]) < 20:
-                print(df.tail(n=20))
+            
                 
-                data = {
-                    "date": last_ticker['date'],
-                    "timeframe": timeframe,
-                    "symbol": last_ticker['symbol'],
-                    "market": last_ticker['market'],
-                    "close": format(round(
-                        df.iloc[-2, df.columns.get_loc("close")], 8,'.8f')
-                    ),
-                    "volume": round(
-                        df.iloc[-2, df.columns.get_loc("volume")], 2
-                    ),
-                    "quote": round(
-                        df.iloc[-2, df.columns.get_loc("quote")], 2
-                    ),
-                    "volume24h": round(volume_24h,2),
-                    "bbl": format(round(
-                        df.iloc[-2,
-                                df.columns.get_loc("BBL_20_2.0")], 8,'.8f')
-                    ),
-                    "bbm": format(round(
-                        df.iloc[-2,
-                                df.columns.get_loc("BBM_20_2.0")], 8,'.8f')
-                    ),
-                    "bbu": format(round(
-                        df.iloc[-2,
-                                df.columns.get_loc("BBU_20_2.0")], 8,'.8f')
-                    ),
-                    "bbb": round(
-                        df.iloc[-2,
-                                df.columns.get_loc("BBB_20_2.0")], 1
-                    ),
-                    "stochk": round(
-                        df.iloc[-2,
-                                df.columns.get_loc("STOCHk_14_3_1")], 0
-                    ),
-                    "stockd": round(
-                        df.iloc[-2,
-                                df.columns.get_loc("STOCHd_14_3_1")], 0
-                    ),
-                }
+        data = {
+            "date": last_ticker['date'],
+            "timeframe": timeframe,
+            "symbol": last_ticker['symbol'],
+            "market": last_ticker['market'],
+            "close": format(round(
+                df.iloc[-2, df.columns.get_loc("close")], 8,'.8f')
+            ),
+            "volume": round(
+                df.iloc[-2, df.columns.get_loc("volume")], 2
+            ),
+            "quote": round(
+                df.iloc[-2, df.columns.get_loc("quote")], 2
+            ),
+            "volume24h": round(volume_24h,2),
+            "bbl": format(round(
+                df.iloc[-2,
+                        df.columns.get_loc("BBL_20_2.0")], 8,'.8f')
+            ),
+            "bbm": format(round(
+                df.iloc[-2,
+                        df.columns.get_loc("BBM_20_2.0")], 8,'.8f')
+            ),
+            "bbu": format(round(
+                df.iloc[-2,
+                        df.columns.get_loc("BBU_20_2.0")], 8,'.8f')
+            ),
+            "bbb": round(
+                df.iloc[-2,
+                        df.columns.get_loc("BBB_20_2.0")], 1
+            ),
+            "stochk": round(
+                df.iloc[-2,
+                        df.columns.get_loc("STOCHk_14_3_1")], 0
+            ),
+            "stockd": round(
+                df.iloc[-2,
+                        df.columns.get_loc("STOCHd_14_3_1")], 0
+            ),
+        }
 
+        
+        # print(data)
                 
-                # print(data)
-                        
-                headers = {
-                    "Content-Type": "application/json",
-                    "accept": "application/json"
-                }
-                        #     # requests.post("http://nextjs:3000/api/baro/newBaro", data=data)
-                        #     # requests.post("http://10.20.12.164:8000/api/v1/baro/",
-                        #     #               json=data1, headers=headers)
+        headers = {
+            "Content-Type": "application/json",
+            "accept": "application/json"
+        }
+                #     # requests.post("http://nextjs:3000/api/baro/newBaro", data=data)
+                #     # requests.post("http://10.20.12.164:8000/api/v1/baro/",
+                #     #               json=data1, headers=headers)
 
-                        #     # print(data1Test)
-                requests.post(os.environ.get('API') + "v2/alert/",
-                                json=data, headers=headers)
+                #     # print(data1Test)
+        requests.post(os.environ.get('API') + "v2/alert/",
+                        json=data, headers=headers)
     except TypeError as error:
         print({'typeError':error})
     except KeyError as error:
