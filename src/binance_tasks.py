@@ -233,7 +233,7 @@ def kline_message_collector(message):
     '''process incoming ticker message'''
     # Collect multiple messages and send to task
     # print(message)
-    if len(collected_tickers) < 10:
+    if len(collected_tickers) < 20:
         collected_tickers.append(message)
         # print(len(collected_tickers))
     else:

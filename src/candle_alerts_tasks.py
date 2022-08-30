@@ -37,7 +37,7 @@ def build_indicators_from_candles(timeframe,resample_frame):
             # print({'24hVolume':volume_24h})
             if  volume_24h > 100: 
                 # print('Volume OK')
-                process_alert_ticker_data.delay(ticker_data=filterTicker,volume_24h=volume_24h,timeframe=timeframe,resample_frame=resample_frame)
+                process_alert_ticker_data(ticker_data=filterTicker,volume_24h=volume_24h,timeframe=timeframe,resample_frame=resample_frame)
 
 @app.task
 def process_alert_ticker_data(ticker_data,volume_24h,timeframe,resample_frame):
