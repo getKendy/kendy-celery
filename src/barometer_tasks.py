@@ -620,7 +620,7 @@ def update_barometer(save=False):
         # "total_gbp_alt_volume_usdt": (total_gbp_alt_volume_usdt / 1000000),
     }
     
-    print(data)
+    # print(data)
     
 #     # connect(host=MONGO_URL)
 #     data1 = {
