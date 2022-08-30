@@ -24,20 +24,14 @@ def build_indicators_from_candles(timeframe,resample_frame):
         market = dict(json.loads(r.get(key)))
         if market["quoteAsset"] != "BTC":
             continue
-        response = requests.get(
-            os.environ.get('API') + 'v2/tickers/' + market["symbol"])
-        # print(response)
-        if not response:
-            continue
-        filterTicker = response.json()
-        # print(len(filterTicker))
-        
-        if len(filterTicker) > 21:  # minimum 20 tickers to build BolingerBands
-            volume_24h = volume_24h_check(baseAsset=market['baseAsset'],quoteAsset=market["quoteAsset"])
-            # print({'24hVolume':volume_24h})
-            if  volume_24h > 100: 
-                # print('Volume OK')
-                process_alert_ticker_data(ticker_data=filterTicker,volume_24h=volume_24h,timeframe=timeframe,resample_frame=resample_frame)
+        volume_24h = volume_24h_check(baseAsset=market['baseAsset'],quoteAsset=market["quoteAsset"])
+        if  volume_24h > 150: 
+            response = requests.get(
+                os.environ.get('API') + 'v2/tickers/' + market["symbol"])
+            if not response:
+                continue
+            filterTicker = response.json()
+            process_alert_ticker_data(ticker_data=filterTicker,volume_24h=volume_24h,timeframe=timeframe,resample_frame=resample_frame)
 
 @app.task
 def process_alert_ticker_data(ticker_data,volume_24h,timeframe,resample_frame):

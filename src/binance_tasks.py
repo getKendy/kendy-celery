@@ -338,7 +338,7 @@ def clean_old_tickers():
     # cleaning = True
     # while cleaning:
     response = requests.get(
-        os.environ.get('API') + 'v2/tickerexpired/24')
+        os.environ.get('API') + 'v2/tickerexpired/2')
     if not response:
         return 'error'
     data = response.json()
