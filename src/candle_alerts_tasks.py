@@ -11,14 +11,13 @@ r = redis.Redis(host=os.environ.get('REDIS_CACHE'),
                 db=os.environ.get('REDIS_DB'))
 
 @app.task
-def build_indicators_from_candles():
+def build_indicators_from_candles(timeframe,resample_frame):
     '''build indicators from candles'''
     # dateNow = datetime.datetime.now()
     # queryTime = datetime.datetime.now() - datetime.timedelta(minutes=30)
     # tableTickers = Tickers.objects.all().filter(date__gte=queryTime)
     # tableTickers = indicatorTickers([queryTime, dateNow])
-
-    print('starting calculations')
+   
     keys = r.keys("market*")
     for key in keys:
         # only btc pairs for now!!
@@ -32,16 +31,16 @@ def build_indicators_from_candles():
             continue
         filterTicker = response.json()
         # print(len(filterTicker))
-
+        
         if len(filterTicker) > 21:  # minimum 20 tickers to build BolingerBands
             volume_24h = volume_24h_check(baseAsset=market['baseAsset'],quoteAsset=market["quoteAsset"])
             # print({'24hVolume':volume_24h})
             if  volume_24h > 150: 
                 # print('Volume OK')
-                process_alert_ticker_data.delay(ticker_data=filterTicker,volume_24h=volume_24h)
+                process_alert_ticker_data.delay(ticker_data=filterTicker,volume_24h=volume_24h,timeframe=timeframe,resample_frame=resample_frame)
 
 @app.task
-def process_alert_ticker_data(ticker_data,volume_24h):
+def process_alert_ticker_data(ticker_data,volume_24h,timeframe,resample_frame):
     '''process alert ticker data'''
     try:
         last_ticker = ticker_data[-2]
@@ -68,7 +67,7 @@ def process_alert_ticker_data(ticker_data,volume_24h):
         # print('dropping date')
         df = df.drop(['date'], axis=1)
         # !!!! RESAMPLE TICKERS INTO USABLE TIMEFRAMES
-        df = df.resample('1T', label='right', closed='right').agg({
+        df = df.resample(resample_frame, label='right', closed='right').agg({
             'open': 'first',
             'high': 'max',
             'low': 'min',
@@ -85,7 +84,7 @@ def process_alert_ticker_data(ticker_data,volume_24h):
             cumulative=True,
             append=True,
         )
-        # print(df.tail(n=20))
+        print(df.tail(n=20))
        
         if (
             float(df.iloc[-2, df.columns.get_loc("close")])
@@ -108,6 +107,7 @@ def process_alert_ticker_data(ticker_data,volume_24h):
                 
                 data = {
                     "date": last_ticker['date'],
+                    "timeframe": timeframe,
                     "symbol": last_ticker['symbol'],
                     "market": last_ticker['market'],
                     "close": format(round(
