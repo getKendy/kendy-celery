@@ -137,19 +137,19 @@ def get_klines_all_symbols():
         for x in range(len(btc_martkets)):
             if x < 250:
                 ws_client1.kline(btc_martkets[x], id=x,
-                                 interval='1s', callback=kline_message_collector)
+                                 interval='1m', callback=kline_message_collector)
                 time.sleep(0.3)
             elif x > 250 and x < 500:
                 ws_client2.kline(btc_martkets[x], id=x,
-                                 interval='1s', callback=kline_message_collector)
+                                 interval='1m', callback=kline_message_collector)
                 time.sleep(0.3)
             elif x > 500 and x < 750:
                 ws_client3.kline(btc_martkets[x], id=x,
-                                 interval='1s', callback=kline_message_collector)
+                                 interval='1m', callback=kline_message_collector)
                 time.sleep(0.3)
             else:
                 ws_client4.kline(btc_martkets[x], id=x,
-                                 interval='1s', callback=kline_message_collector)
+                                 interval='1m', callback=kline_message_collector)
         
         
         
