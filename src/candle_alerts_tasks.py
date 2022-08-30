@@ -1,4 +1,3 @@
-from types import NoneType
 from .celery import app
 import pandas as pd
 import pandas_ta as ta
