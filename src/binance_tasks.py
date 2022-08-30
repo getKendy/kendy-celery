@@ -48,7 +48,7 @@ def get_klines_all_symbols():
     # if len(all_symbols) > 4000:
     #     return {'error': 'not enough clients to open all kline streams'}
     try:
-        
+        get_symbols_from_exchangeinfo.delay()
         ws_miniticker = WebSocketClient()
         ws_miniticker.start()
         print('miniticker started')
