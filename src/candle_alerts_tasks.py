@@ -84,7 +84,7 @@ def process_alert_ticker_data(ticker_data,volume_24h,timeframe,resample_frame):
             cumulative=True,
             append=True,
         )
-        print(df.tail(n=20))
+        # print(df.tail(n=20))
        
         if (
             float(df.iloc[-2, df.columns.get_loc("close")])
