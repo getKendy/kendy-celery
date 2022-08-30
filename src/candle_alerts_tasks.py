@@ -1,3 +1,4 @@
+from types import NoneType
 from .celery import app
 import pandas as pd
 import pandas_ta as ta
@@ -141,7 +142,8 @@ def process_alert_ticker_data(ticker_data,volume_24h,timeframe,resample_frame):
         print({'keyError':error})
     except ValueError as error:
         print({'ValueError':error})
-        
+    except AttributeError as error:
+        print({'AttributeError':error})
 
 @app.task
 def volume_24h_check(baseAsset,quoteAsset):
