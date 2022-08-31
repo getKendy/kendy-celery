@@ -342,3 +342,16 @@ def clean_old_tickers():
     if not response:
         return 'error'
     data = response.json()
+    
+@app.task
+def clean_old_alerts():
+    '''clean old alerts'''
+    # page = 1
+    # i = 0
+    # cleaning = True
+    # while cleaning:
+    response = requests.get(
+        os.environ.get('API') + 'v2/alertexpired/24')
+    if not response:
+        return 'error'
+    data = response.json()

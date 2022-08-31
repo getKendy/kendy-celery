@@ -55,7 +55,12 @@ app.conf.beat_schedule = {
         "task": "src.candle_alerts_tasks.build_indicators_from_candles",
         "schedule": crontab(minute="*/5"),
         "kwargs": ({"timeframe":"5m","resample_frame":"5T"}),
-    }
+    },
+    "clean_old_alerts": {
+        "task": "src.binance_tasks.clean_old_alerts",
+        "schedule": crontab(minute="*/5"),
+        "args": (),
+    },
 }
 
 if __name__ == '__main__':

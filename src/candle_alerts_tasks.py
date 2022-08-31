@@ -26,17 +26,17 @@ def build_indicators_from_candles(timeframe,resample_frame):
             continue
         volume_24h = volume_24h_check(baseAsset=market['baseAsset'],quoteAsset=market["quoteAsset"])
         if  volume_24h > 150: 
-            response = requests.get(
-                os.environ.get('API') + 'v2/tickers/' + market["symbol"])
-            if not response:
-                continue
-            filterTicker = response.json()
-            process_alert_ticker_data(ticker_data=filterTicker,volume_24h=volume_24h,timeframe=timeframe,resample_frame=resample_frame)
+            process_alert_ticker_data.delay(market=market,volume_24h=volume_24h,timeframe=timeframe,resample_frame=resample_frame)
 
 @app.task
-def process_alert_ticker_data(ticker_data,volume_24h,timeframe,resample_frame):
+def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame):
     '''process alert ticker data'''
     try:
+        response = requests.get(
+                os.environ.get('API') + 'v2/tickers/' + market["symbol"])
+        if not response:
+            exit
+        ticker_data = response.json()
         last_ticker = ticker_data[-2]
         # print({last_ticker['symbol']:'generating indicators'})
         
