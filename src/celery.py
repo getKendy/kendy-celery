@@ -41,11 +41,11 @@ app.conf.beat_schedule = {
     #     "schedule": crontab(minute="*"),
     #     "kwargs": ({"timeframe":"1m","resample_frame":"1T"}),
     # },
-    # "build_indicators_from_2m_candles": {
-    #     "task": "src.candle_alerts_tasks.build_indicators_from_candles",
-    #     "schedule": crontab(minute="*/2"),
-    #     "kwargs": ({"timeframe":"2m","resample_frame":"2T"}),
-    # },
+    "build_indicators_from_2m_candles": {
+        "task": "src.candle_alerts_tasks.build_indicators_from_candles",
+        "schedule": crontab(minute="*/2"),
+        "kwargs": ({"timeframe":"2m","resample_frame":"2T"}),
+    },
     "build_indicators_from_3m_candles": {
         "task": "src.candle_alerts_tasks.build_indicators_from_candles",
         "schedule": crontab(minute="*/3"),
