@@ -1,3 +1,4 @@
+# from .celery import app, candle_alert
 from .celery import app
 import pandas as pd
 import pandas_ta as ta
@@ -5,10 +6,22 @@ import redis
 import os
 import requests
 import json
+# import socketio
 
 r = redis.Redis(host=os.environ.get('REDIS_CACHE'),
                 port=os.environ.get('REDIS_PORT'),
                 db=os.environ.get('REDIS_DB'))
+
+from appwrite.client import Client
+from appwrite.services.databases import Databases
+
+client = Client()
+(client
+  .set_endpoint(os.environ.get('APPWITE_ENDPOINT')) # Your API Endpoint
+  .set_project(os.environ.get('APPWRITE_PROJECTID')) # Your project ID
+  .set_key(os.environ.get('APPWRITE_KEY')) # Your secret API key
+)
+databases = Databases(client)
 
 @app.task
 def build_indicators_from_candles(timeframe,resample_frame):
@@ -129,6 +142,14 @@ def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame):
                         #     # print(data1Test)
                 requests.post(os.environ.get('API') + "v2/alert/",
                                 json=data, headers=headers)
+                # candle_alert(data=data)
+                result = databases.create_document(
+                collection_id=os.environ.get('APPWRITE_ALERTID'),
+                database_id=os.environ.get('APPWRITE_DATABASEID'),
+                document_id="unique()",
+                data=data
+                )
+                return result
     except TypeError as error:
         print({'typeError':error})
     except KeyError as error:

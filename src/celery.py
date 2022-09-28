@@ -1,8 +1,31 @@
 from celery import Celery
 from celery.schedules import crontab
-
+# import socketio
 app = Celery('src')
 app.config_from_object('celeryconfig')
+
+# sio =socketio.Client()
+
+
+
+
+# @sio.event
+# def connect():
+#     print('connection established')
+
+
+# @sio.event
+# def candle_alert(data):
+#     sio.emit('tickeralert', data)
+    
+# @sio.event
+# def disconnect():
+#     print('disconnected from server')
+
+# sio.connect('http://10.20.31.6:3000')
+
+
+
 
 
 app.conf.update(

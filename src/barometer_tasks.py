@@ -9,6 +9,17 @@ r = redis.Redis(host=os.environ.get('REDIS_CACHE'),
                 port=os.environ.get('REDIS_PORT'),
                 db=os.environ.get('REDIS_DB'))
 
+from appwrite.client import Client
+from appwrite.services.databases import Databases
+
+client = Client()
+(client
+  .set_endpoint(os.environ.get('APPWITE_ENDPOINT')) # Your API Endpoint
+  .set_project(os.environ.get('APPWRITE_PROJECTID')) # Your project ID
+  .set_key(os.environ.get('APPWRITE_KEY')) # Your secret API key
+)
+databases = Databases(client)
+
 
 @app.task
 def update_barometer(save=False):
@@ -647,6 +658,13 @@ def update_barometer(save=False):
 #     # print(data1Test)
     requests.post(os.environ.get('API') + "v2/baro/",
                   json=data, headers=headers)
+    result = databases.create_document(
+        collection_id=os.environ.get('APPWRITE_BAROMETERID'),
+        database_id=os.environ.get('APPWRITE_DATABASEID'),
+        document_id="unique()",
+        data=data
+        )
+    return result
 #     # insertBaroData(baroData=data)
 #     # baroTable = Baro(date=dateNow,
 #     #                  fiatBtcVolume=total_btc_fiat_volume,
