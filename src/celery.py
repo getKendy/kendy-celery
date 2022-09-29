@@ -49,11 +49,11 @@ app.conf.beat_schedule = {
         "schedule": crontab(minute="0",hour="*"),
         "args": (),
     },
-    "update_barometer": {
-        "task": "src.barometer_tasks.update_barometer",
-        "schedule": crontab(minute="*"),
-        "args": (),
-    },
+    # "update_barometer": {
+    #     "task": "src.barometer_tasks.update_barometer",
+    #     "schedule": crontab(minute="*"),
+    #     "args": (),
+    # },
     "clean_old_tickers": {
         "task": "src.binance_tasks.clean_old_tickers",
         "schedule": crontab(minute="*/2"),

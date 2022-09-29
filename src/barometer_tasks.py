@@ -11,6 +11,7 @@ r = redis.Redis(host=os.environ.get('REDIS_CACHE'),
 
 from appwrite.client import Client
 from appwrite.services.databases import Databases
+from appwrite.services.functions import Functions
 
 client = Client()
 (client
@@ -19,7 +20,7 @@ client = Client()
   .set_key(os.environ.get('APPWRITE_KEY')) # Your secret API key
 )
 databases = Databases(client)
-
+functions = Functions(client)
 
 @app.task
 def update_barometer(save=False):
@@ -451,15 +452,21 @@ def update_barometer(save=False):
     # total_gbp_alt_volume_usdt = round(
     #     calculate_dollar_price(coin="GBP") * total_gbp_alt_volume, 2)
 
-    total_btc_alt_volume_usdt = round(
-        calculate_dollar_price(coin="BTC") * total_btc_alt_volume, 2
-    )
-    total_bnb_alt_volume_usdt = round(
-        calculate_dollar_price(coin="ETH") * total_eth_alt_volume, 2
-    )
-    total_eth_alt_volume_usdt = round(
-        calculate_dollar_price(coin="BNB") * total_bnb_alt_volume, 2
-    )
+    # total_btc_alt_volume_usdt = round(
+    #     calculate_dollar_price(coin="BTC") * total_btc_alt_volume, 2
+    # )
+    # total_bnb_alt_volume_usdt = round(
+    #     calculate_dollar_price(coin="ETH") * total_eth_alt_volume, 2
+    # )
+    # total_eth_alt_volume_usdt = round(
+    #     calculate_dollar_price(coin="BNB") * total_bnb_alt_volume, 2
+    # )
+    # print(functions.create_execution('calculate_dollar_price','BTC'))
+    # print(float(functions.create_execution('calculate_dollar_price','BTC')['response']))
+    # print(type(functions.create_execution('calculate_dollar_price','BTC')['response']))
+    total_btc_alt_volume_usdt= round(float(functions.create_execution('calculate_dollar_price','BTC')['response']) * total_btc_alt_volume, 2)
+    total_bnb_alt_volume_usdt= round(float(functions.create_execution('calculate_dollar_price','ETH')['response']) * total_eth_alt_volume, 2)
+    total_eth_alt_volume_usdt= round(float(functions.create_execution('calculate_dollar_price','BNB')['response']) * total_bnb_alt_volume, 2)
 
     total_volume = (
         total_btc_alt_volume_usdt
