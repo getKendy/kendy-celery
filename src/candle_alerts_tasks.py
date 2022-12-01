@@ -39,10 +39,10 @@ def build_indicators_from_candles(timeframe,resample_frame):
             continue
         volume_24h = volume_24h_check(baseAsset=market['baseAsset'],quoteAsset=market["quoteAsset"])
         if  volume_24h > 150: 
-            process_alert_ticker_data.delay(market=market,volume_24h=volume_24h,timeframe=timeframe,resample_frame=resample_frame)
+            process_alert_ticker_data.delay(market=market,volume_24h=volume_24h,timeframe=timeframe,resample_frame=resample_frame,base=market['baseAsset'],quote=market['quoteAsset'])
 
 @app.task
-def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame):
+def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame,base,quote):
     '''process alert ticker data'''
     try:
         response = requests.get(
@@ -110,7 +110,7 @@ def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame):
             # print(df.tail(n=20))
             
             if float(df.iloc[-1, df.columns.get_loc("STOCHk_14_3_1")]) < 20:
-                
+                trend24h = trend_24h_check(baseAsset=base,quoteAsset=quote)
                 data = {
                     "date": last_ticker['date'],
                     "timeframe": timeframe,
@@ -120,6 +120,7 @@ def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame):
                     "volume": round(df.iloc[-1, df.columns.get_loc("volume")], 2),
                     "quote": round(df.iloc[-1, df.columns.get_loc("quote")], 2),
                     "volume24h": round(volume_24h,2),
+                    "trend24h": trend24h,
                     "bbl": format(round(df.iloc[-1, df.columns.get_loc("BBL_20_2.0")], 8),'.8f'),
                     "bbm": format(round(df.iloc[-1, df.columns.get_loc("BBM_20_2.0")], 8),'.8f'),
                     "bbu": format(round(df.iloc[-1, df.columns.get_loc("BBU_20_2.0")], 8),'.8f'),
@@ -168,4 +169,16 @@ def volume_24h_check(baseAsset,quoteAsset):
     ticker = dict(json.loads(ticker))
     if quoteAsset == 'BTC':
         return float(ticker['q'])
+
+@app.task
+def trend_24h_check(baseAsset,quoteAsset):
+    ticker = r.get(baseAsset+quoteAsset)
+    if ticker is None:
+        return 'no data'
+    ticker = dict(json.loads(ticker))
+    perc = round((float(ticker['c']) * 100 ) / float(ticker['o']) - 100, 2)
+    if ticker['o'] > ticker['c']:
+        return 'down ' + str(perc) + '%'
+    else:
+        return 'up ' + str(perc) + '%'
     
