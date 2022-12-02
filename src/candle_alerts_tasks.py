@@ -178,7 +178,7 @@ def trend_24h_check(baseAsset,quoteAsset):
     ticker = dict(json.loads(ticker))
     perc = round((float(ticker['c']) * 100 ) / float(ticker['o']) - 100, 2)
     if ticker['o'] > ticker['c']:
-        return 'down ' + str(perc) + '%'
+        return str(perc) + '%'
     else:
-        return 'up ' + str(perc) + '%'
+        return str(perc) + '%'
     
