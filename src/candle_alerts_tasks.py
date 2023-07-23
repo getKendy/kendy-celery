@@ -8,9 +8,13 @@ import requests
 import json
 # import socketio
 
-r = redis.Redis(host=os.environ.get('REDIS_CACHE'),
+binance_redis = redis.Redis(host=os.environ.get('REDIS_CACHE'),
                 port=os.environ.get('REDIS_PORT'),
-                db=os.environ.get('REDIS_DB'))
+                db=os.environ.get('REDIS_DBBINANCE'))
+
+kucoin_redis = redis.Redis(host=os.environ.get('REDIS_CACHE'),
+                port=os.environ.get('REDIS_PORT'),
+                db=os.environ.get('REDIS_DBKUCOIN'))
 
 from appwrite.client import Client
 from appwrite.services.databases import Databases
@@ -24,31 +28,49 @@ client = Client()
 databases = Databases(client)
 
 @app.task
-def build_indicators_from_candles(timeframe,resample_frame):
+def build_indicators_from_candles(timeframe,resample_frame,exchange):
     '''build indicators from candles'''
     # dateNow = datetime.datetime.now()
     # queryTime = datetime.datetime.now() - datetime.timedelta(minutes=30)
     # tableTickers = Tickers.objects.all().filter(date__gte=queryTime)
     # tableTickers = indicatorTickers([queryTime, dateNow])
-   
-    keys = r.keys("market*")
-    for key in keys:
-        # only btc pairs for now!!
-        market = dict(json.loads(r.get(key)))
-        if market["quoteAsset"] != "BTC":
-            continue
-        volume_24h = volume_24h_check(baseAsset=market['baseAsset'],quoteAsset=market["quoteAsset"])
-        if  volume_24h > 150: 
-            process_alert_ticker_data.delay(market=market,volume_24h=volume_24h,timeframe=timeframe,resample_frame=resample_frame,base=market['baseAsset'],quote=market['quoteAsset'])
+    # print(exchange)
+    if exchange == 'binance':
+        keys = binance_redis.keys("marketBin*")
+        # print(len(keys))
+        for key in keys:
+            # only btc pairs for now!!
+            market = dict(json.loads(binance_redis.get(key)))
+            # print(market)
+            if market["quoteAsset"] != "BTC":
+                continue
+            volume_24h = binance_volume_24h_check(baseAsset=market['baseAsset'],quoteAsset=market["quoteAsset"])
+            if  volume_24h > 150: 
+                process_alert_ticker_data.delay(market=market,volume_24h=volume_24h,timeframe=timeframe,resample_frame=resample_frame,base=market['baseAsset'],quote=market['quoteAsset'], exchange=exchange)
+    elif exchange == 'kucoin':
+        keys = kucoin_redis.keys("marketKu*")
+        # print(len(keys))
+        for key in keys:
+            # only btc pairs for now!!
+            market = dict(json.loads(kucoin_redis.get(key)))
+            # print(market)
+            if market["symbol"].split("-")[1] != "BTC":
+                continue
+            volume_24h = kucoin_volume_24h_check(baseAsset=market["symbol"].split("-")[0],quoteAsset=market["symbol"].split("-")[1])
+            # print(volume_24h)
+            if  volume_24h > 1:
+                process_alert_ticker_data.delay(market=market,volume_24h=volume_24h,timeframe=timeframe,resample_frame=resample_frame,base=market["symbol"].split("-")[0],quote=market["symbol"].split("-")[1], exchange=exchange)
 
 @app.task
-def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame,base,quote):
+def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame,base,quote,exchange):
     '''process alert ticker data'''
     try:
         response = requests.get(
-                os.environ.get('API') + 'v2/tickers/' + market["symbol"])
+                os.environ.get('API') + 'v2/tickers/' + base + quote + "?exchange=" + exchange)
         if not response:
+            print('error fetching tickerdata for ' + base + quote)
             exit
+     
         ticker_data = response.json()
         last_ticker = ticker_data[-1]
         # print({last_ticker['symbol']:'generating indicators'})
@@ -110,10 +132,14 @@ def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame,base,qu
             # print(df.tail(n=20))
             
             if float(df.iloc[-1, df.columns.get_loc("STOCHk_14_3_1")]) < 20:
-                trend24h = trend_24h_check(baseAsset=base,quoteAsset=quote)
+                if exchange == 'binance':
+                    trend24h = binance_trend_24h_check(baseAsset=base,quoteAsset=quote)
+                if exchange == 'kucoin':
+                    trend24h = kucoin_trend_24h_check(baseAsset=base,quoteAsset=quote)
                 data = {
                     "date": last_ticker['date'],
                     "timeframe": timeframe,
+                    "exchange": exchange,
                     "symbol": last_ticker['symbol'],
                     "market": last_ticker['market'],
                     "close": format(round(df.iloc[-1, df.columns.get_loc("close")], 8),'.8f'),
@@ -161,9 +187,9 @@ def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame,base,qu
         print({'AttributeError':error})
 
 @app.task
-def volume_24h_check(baseAsset,quoteAsset):
+def binance_volume_24h_check(baseAsset,quoteAsset):
     '''volume 24h check'''
-    ticker = r.get(baseAsset+quoteAsset)
+    ticker = binance_redis.get(baseAsset+quoteAsset)
     if ticker is None:
         return 0
     ticker = dict(json.loads(ticker))
@@ -171,14 +197,39 @@ def volume_24h_check(baseAsset,quoteAsset):
         return float(ticker['q'])
 
 @app.task
-def trend_24h_check(baseAsset,quoteAsset):
-    ticker = r.get(baseAsset+quoteAsset)
+def kucoin_volume_24h_check(baseAsset,quoteAsset):
+    '''volume 24h check'''
+    ticker = kucoin_redis.get(baseAsset+quoteAsset)
+    if ticker is None:
+        return 0
+    ticker = dict(json.loads(ticker))
+    # print({'volume': ticker})
+    if quoteAsset == 'BTC':
+        return float(ticker['quote'])
+
+
+@app.task
+def binance_trend_24h_check(baseAsset,quoteAsset):
+    ticker = binance_redis.get(baseAsset+quoteAsset)
     if ticker is None:
         return 'no data'
     ticker = dict(json.loads(ticker))
     perc = round((float(ticker['c']) * 100 ) / float(ticker['o']) - 100, 2)
-    if ticker['o'] > ticker['c']:
-        return str(perc) + '%'
-    else:
-        return str(perc) + '%'
-    
+    # if ticker['o'] > ticker['c']:
+    #     return str(perc) + '%'
+    # else:
+    return str(perc) + '%'
+
+
+@app.task
+def kucoin_trend_24h_check(baseAsset,quoteAsset):
+    ticker = kucoin_redis.get(baseAsset+quoteAsset)
+    if ticker is None:
+        return 'no data'
+    ticker = dict(json.loads(ticker))
+    perc = round((float(ticker['close']) * 100 ) / float(ticker['open']) - 100, 2)
+    # if ticker['open'] > ticker['close']:
+    #     return str(perc) + '%'
+    # else:
+    return str(perc) + '%'
+

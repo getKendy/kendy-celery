@@ -20,7 +20,7 @@ def pop_all(list_input):
 
 @app.task
 def start_klines_ticker():
-    data = r.get("TickerRunning")
+    data = r.get("BinanceTickerRunning")
     if not data:
         get_klines_all_symbols.delay()
         
@@ -37,7 +37,7 @@ def get_symbols_from_exchangeinfo():
     '''get symbols from exchange_info'''
     exchange_info = get_exchange_info()
     for symbol in exchange_info['symbols']:
-        r.set(("market" + symbol["symbol"]), str(json.dumps(symbol)), 86400)
+        r.set(("marketBin" + symbol["symbol"]), str(json.dumps(symbol)), 86400)
 
 
 @app.task
@@ -129,7 +129,7 @@ def get_klines_all_symbols():
         
         # # btc 1m klines for alerts
         btc_martkets = []
-        keys = r.keys("market*")
+        keys = r.keys("marketBin*")
         for key in keys:
             market = dict(json.loads(r.get(key)))
             if market['quoteAsset'] == 'BTC':
@@ -198,7 +198,7 @@ def miniticker_message_handler(message):
             # print(tick)
             if tick['e'] == '24hrMiniTicker':
                 try:
-                    symbol = dict(json.loads(r.get("market" + tick["s"])))
+                    symbol = dict(json.loads(r.get("marketBin" + tick["s"])))
                 except:
                     symbol = {"symbol": "noData"}
                 key = str(tick["s"]).encode("UTF-8")
@@ -274,7 +274,7 @@ def save_tickers(tickers):
         # print(type(ticker))
         
         try:
-            symbol = dict(json.loads(r.get("market" + ticker["s"])))
+            symbol = dict(json.loads(r.get("marketBin" + ticker["s"])))
         except:
             symbol = {"symbol": {"baseAsset":'noData',"quoteAsset":'noData'}}
         
@@ -306,6 +306,7 @@ def save_tickers(tickers):
         all_tickers.append(
             {
                 "date": ticker["E"],
+                "exchange": "binance",
                 "symbol": ticker["s"],
                 "market": symbol["baseAsset"] + '/' + symbol["quoteAsset"],
                 # "market": ticker['s'],
@@ -326,7 +327,7 @@ def save_tickers(tickers):
     if len(all_tickers) >= 1:
         requests.post(
             os.environ.get('API') + "v2/tickers/", json=tickers, headers=headers)
-    r.set("TickerRunning", "1", 120)
+    r.set("BinanceTickerRunning", "1", 120)
 
 
 
