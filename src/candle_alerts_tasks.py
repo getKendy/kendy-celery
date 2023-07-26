@@ -58,7 +58,7 @@ def build_indicators_from_candles(timeframe,resample_frame,exchange):
                 continue
             volume_24h = kucoin_volume_24h_check(baseAsset=market["symbol"].split("-")[0],quoteAsset=market["symbol"].split("-")[1])
             # print(volume_24h)
-            if  volume_24h > 10:
+            if  volume_24h > 5:
                 process_alert_ticker_data.delay(market=market,volume_24h=volume_24h,timeframe=timeframe,resample_frame=resample_frame,base=market["symbol"].split("-")[0],quote=market["symbol"].split("-")[1], exchange=exchange)
 
 @app.task
