@@ -214,7 +214,7 @@ def binance_trend_24h_check(baseAsset,quoteAsset):
     if ticker is None:
         return 'no data'
     ticker = dict(json.loads(ticker))
-    perc = round((float(ticker['c']) * 100 ) / float(ticker['o']) - 100, 2)
+    perc = round((float(ticker['close']) * 100 ) / float(ticker['open']) - 100, 2)
     # if ticker['o'] > ticker['c']:
     #     return str(perc) + '%'
     # else:
