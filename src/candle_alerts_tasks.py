@@ -194,7 +194,7 @@ def binance_volume_24h_check(baseAsset,quoteAsset):
         return 0
     ticker = dict(json.loads(ticker))
     if quoteAsset == 'BTC':
-        return float(ticker['q'])
+        return float(ticker['quote'])
 
 @app.task
 def kucoin_volume_24h_check(baseAsset,quoteAsset):
