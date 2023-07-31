@@ -45,7 +45,7 @@ def build_indicators_from_candles(timeframe,resample_frame,exchange):
             if market["quoteAsset"] != "BTC":
                 continue
             volume_24h = binance_volume_24h_check(baseAsset=market['baseAsset'],quoteAsset=market["quoteAsset"])
-            if  volume_24h > 10: 
+            if  volume_24h > 10:
                 process_alert_ticker_data.delay(market=market,volume_24h=volume_24h,timeframe=timeframe,resample_frame=resample_frame,base=market['baseAsset'],quote=market['quoteAsset'], exchange=exchange)
     elif exchange == 'kucoin':
         keys = kucoin_redis.keys("marketKu*")
@@ -59,6 +59,7 @@ def build_indicators_from_candles(timeframe,resample_frame,exchange):
             volume_24h = kucoin_volume_24h_check(baseAsset=market["symbol"].split("-")[0],quoteAsset=market["symbol"].split("-")[1])
             # print(volume_24h)
             if  volume_24h > 1:
+                # print(market)
                 process_alert_ticker_data.delay(market=market,volume_24h=volume_24h,timeframe=timeframe,resample_frame=resample_frame,base=market["symbol"].split("-")[0],quote=market["symbol"].split("-")[1], exchange=exchange)
 
 @app.task
@@ -194,7 +195,7 @@ def binance_volume_24h_check(baseAsset,quoteAsset):
         return 0
     ticker = dict(json.loads(ticker))
     if quoteAsset == 'BTC':
-        return float(ticker['quote'])
+        return float(ticker['q'])
 
 @app.task
 def kucoin_volume_24h_check(baseAsset,quoteAsset):
@@ -214,7 +215,7 @@ def binance_trend_24h_check(baseAsset,quoteAsset):
     if ticker is None:
         return 'no data'
     ticker = dict(json.loads(ticker))
-    perc = round((float(ticker['close']) * 100 ) / float(ticker['open']) - 100, 2)
+    perc = round((float(ticker['c']) * 100 ) / float(ticker['o']) - 100, 2)
     # if ticker['o'] > ticker['c']:
     #     return str(perc) + '%'
     # else:

@@ -10,7 +10,7 @@ import json
 collected_tickers = []
 r = redis.Redis(host=os.environ.get('REDIS_CACHE'),
                 port=os.environ.get('REDIS_PORT'),
-                db=os.environ.get('REDIS_DB'))
+                db=os.environ.get('REDIS_DBBINANCE'))
 
 
 def pop_all(list_input):
@@ -323,10 +323,10 @@ def save_tickers(tickers):
         "Content-Type": "application/json",
         "accept": "application/json"
     }
-    tickers = all_tickers
+    # tickers = all_tickers
     if len(all_tickers) >= 1:
         requests.post(
-            os.environ.get('API') + "v2/tickers/", json=tickers, headers=headers)
+            os.environ.get('API') + "v2/tickers/", json=all_tickers, headers=headers)
     r.set("BinanceTickerRunning", "1", 120)
 
 
