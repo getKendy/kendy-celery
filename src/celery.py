@@ -65,16 +65,16 @@ app.conf.beat_schedule = {
         "schedule": crontab(minute="*"),
         "args": (),
     },
-    "update_barometer": {
-        "task": "src.barometer_tasks.update_barometer",
-        "schedule": crontab(minute="*"),
-        "args": (),
-    },
-    "clean_old_tickers": {
-        "task": "src.binance_tasks.clean_old_tickers",
-        "schedule": crontab(minute="*/2"),
-        "args": (),
-    },
+    # "update_barometer": {
+    #     "task": "src.barometer_tasks.update_barometer",
+    #     "schedule": crontab(minute="*"),
+    #     "args": (),
+    # },
+    # "clean_old_tickers": {
+    #     "task": "src.binance_tasks.clean_old_tickers",
+    #     "schedule": crontab(minute="*/2"),
+    #     "args": (),
+    # },
     "build_ku_indicators_from_1m_candles": {
         "task": "src.candle_alerts_tasks.build_indicators_from_candles",
         "schedule": crontab(minute="*"),
@@ -115,11 +115,11 @@ app.conf.beat_schedule = {
         "schedule": crontab(minute="*/5"),
         "kwargs": ({"timeframe":"5m","resample_frame":"5T","exchange":"binance"}),
     },
-    "clean_old_alerts": {
-        "task": "src.binance_tasks.clean_old_alerts",
-        "schedule": crontab(minute="*/5"),
-        "args": (),
-    },
+    # "clean_old_alerts": {
+    #     "task": "src.binance_tasks.clean_old_alerts",
+    #     "schedule": crontab(minute="*/5"),
+    #     "args": (),
+    # },
 }
 
 if __name__ == '__main__':
