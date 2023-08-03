@@ -17,7 +17,7 @@ def set_fastapi_token(username, password):
     if not token:
         return json.loads({'access_token': 'ERROR', 'token_type': 'ERROR'})
     r.set('fastapi_token', response.text, (1420 * 60 * 60))
-    return response.json()
+    return token
 
 @app.task
 def get_fastapi_token():
