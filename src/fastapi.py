@@ -23,7 +23,7 @@ def set_fastapi_token(username, password):
 def get_fastapi_token():
     token = r.get('fastapi_token')
     if not token:
-        return set_fastapi_token('ron', 'Oldsch00l')
+        return set_fastapi_token(os.environ.get('API_USER'), os.environ.get('API_PASSWORD'))
     # print(token)
     return json.loads(token)
 
