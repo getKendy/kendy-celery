@@ -6,11 +6,13 @@ import redis
 import os
 import requests
 import json
+from .fastapi import get_fastapi_token
 
 collected_tickers = []
 r = redis.Redis(host=os.environ.get('REDIS_CACHE'),
                 port=os.environ.get('REDIS_PORT'),
-                db=os.environ.get('REDIS_DBBINANCE'))
+                db=os.environ.get('REDIS_DBBINANCE'),
+                password=os.environ.get('REDIS_PASSWORD'))
 
 
 def pop_all(list_input):
@@ -319,7 +321,9 @@ def save_tickers(tickers):
             }
         )
     # enf for loop
+    token = get_fastapi_token()
     headers = {
+        "Authorization": token['token_type'] + " " + token['access_token'],
         "Content-Type": "application/json",
         "accept": "application/json"
     }
@@ -338,8 +342,14 @@ def clean_old_tickers():
     # i = 0
     # cleaning = True
     # while cleaning:
+    token = get_fastapi_token()
+    headers = {
+        "Authorization": token['token_type'] + " " + token['access_token'],
+        "Content-Type": "application/json",
+        "accept": "application/json"
+    }
     response = requests.get(
-        os.environ.get('API') + 'v2/tickerexpired/2')
+        os.environ.get('API') + 'v2/tickerexpired/2', headers=headers)
     if not response:
         return 'error'
     data = response.json()
@@ -351,8 +361,14 @@ def clean_old_alerts():
     # i = 0
     # cleaning = True
     # while cleaning:
+    token = get_fastapi_token()
+    headers = {
+        "Authorization": token['token_type'] + " " + token['access_token'],
+        "Content-Type": "application/json",
+        "accept": "application/json"
+    }
     response = requests.get(
-        os.environ.get('API') + 'v2/alertexpired/24')
+        os.environ.get('API') + 'v2/alertexpired/24', headers=headers)
     if not response:
         return 'error'
     data = response.json()

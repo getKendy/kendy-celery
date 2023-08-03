@@ -4,10 +4,12 @@ import redis
 import os
 import requests
 import json
+from .fastapi import get_fastapi_token
 
 r = redis.Redis(host=os.environ.get('REDIS_CACHE'),
                 port=os.environ.get('REDIS_PORT'),
-                db=os.environ.get('REDIS_DB'))
+                db=os.environ.get('REDIS_DBBINANCE'),
+                password=os.environ.get('REDIS_PASSWORD'))
 
 from appwrite.client import Client
 from appwrite.services.databases import Databases
@@ -654,7 +656,9 @@ def update_barometer(save=False):
 #         "altEthStrength": eth_strength,
 #         "altBnbStrength": bnb_strength,
 #     }
+    token = get_fastapi_token()
     headers = {
+        "Authorization": token['token_type'] + " " + token['access_token'],
         "Content-Type": "application/json",
         "accept": "application/json"
     }
@@ -739,7 +743,14 @@ def get_database_price_for_pair(pair):
     # print(pair)
     try:
         # connect(host=MONGO_URL)
-        obj = requests.get(os.environ.get('API') + "v2/ticker/" + pair)
+        token = get_fastapi_token()
+        # print(token)
+        headers = {
+            "Authorization": token['token_type'] + " " + token['access_token'],
+            "Content-Type": "application/json",
+            "accept": "application/json"
+        }
+        obj = requests.get(os.environ.get('API') + "v2/ticker/" + pair, headers=headers)
         # obj = Tickers.objects.filter(market=pair).last()
         # obj = filterTickers(market=pair)
 

@@ -7,14 +7,17 @@ import os
 import requests
 import json
 # import socketio
+from .fastapi import get_fastapi_token
 
 binance_redis = redis.Redis(host=os.environ.get('REDIS_CACHE'),
                 port=os.environ.get('REDIS_PORT'),
-                db=os.environ.get('REDIS_DBBINANCE'))
+                db=os.environ.get('REDIS_DBBINANCE'),
+                password=os.environ.get('REDIS_PASSWORD'))
 
 kucoin_redis = redis.Redis(host=os.environ.get('REDIS_CACHE'),
                 port=os.environ.get('REDIS_PORT'),
-                db=os.environ.get('REDIS_DBKUCOIN'))
+                db=os.environ.get('REDIS_DBKUCOIN'),
+                password=os.environ.get('REDIS_PASSWORD'))
 
 from appwrite.client import Client
 from appwrite.services.databases import Databases
@@ -66,8 +69,15 @@ def build_indicators_from_candles(timeframe,resample_frame,exchange):
 def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame,base,quote,exchange):
     '''process alert ticker data'''
     try:
+        token = get_fastapi_token()
+        # print(token)
+        headers = {
+            "Authorization": token['token_type'] + " " + token['access_token'],
+            "Content-Type": "application/json",
+            "accept": "application/json"
+        }
         response = requests.get(
-                os.environ.get('API') + 'v2/tickers/' + base + quote + "?exchange=" + exchange)
+                os.environ.get('API') + 'v2/tickers/' + base + quote + "?exchange=" + exchange, headers=headers)
         if not response:
             print('error fetching tickerdata for ' + base + quote)
             exit
@@ -159,7 +169,9 @@ def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame,base,qu
                 
                 # print(data)
                         
+                token = get_fastapi_token()
                 headers = {
+                    "Authorization": token['token_type'] + " " + token['access_token'],
                     "Content-Type": "application/json",
                     "accept": "application/json"
                 }

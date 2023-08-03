@@ -7,12 +7,14 @@ from kucoin.client import WsToken, Market
 from kucoin.ws_client import KucoinWsClient
 import asyncio
 import time
+from .fastapi import get_fastapi_token
 kuclient = Market(url='https://api.kucoin.com')
 
 collected_tickers = []
 r = redis.Redis(host=os.environ.get('REDIS_CACHE'),
                 port=os.environ.get('REDIS_PORT'),
-                db=os.environ.get('REDIS_DBKUCOIN'))
+                db=os.environ.get('REDIS_DBKUCOIN'),
+                password=os.environ.get('REDIS_PASSWORD'))
 
 def pop_all(list_input):
     '''remove all items from list'''
@@ -145,12 +147,14 @@ def save_tickers(tickers):
             }
         )
     # enf for loop
-    headers = {
-        "Content-Type": "application/json",
-        "accept": "application/json"
-    }
-    tickers = all_tickers
     if len(all_tickers) >= 1:
+        token = get_fastapi_token()
+        # print(token)
+        headers = {
+            "Authorization": token['token_type'] + " " + token['access_token'],
+            "Content-Type": "application/json",
+            "accept": "application/json"
+        }
         requests.post(
-            os.environ.get('API') + "v2/tickers/", json=tickers, headers=headers)
+            os.environ.get('API') + "v2/tickers/", json=all_tickers, headers=headers)
     # print('saved')
