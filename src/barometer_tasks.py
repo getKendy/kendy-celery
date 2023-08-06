@@ -657,6 +657,8 @@ def update_barometer(save=False):
 #         "altBnbStrength": bnb_strength,
 #     }
     token = get_fastapi_token()
+    print(token)
+    print(type(token))
     headers = {
         "Authorization": token['token_type'] + " " + token['access_token'],
         "Content-Type": "application/json",
