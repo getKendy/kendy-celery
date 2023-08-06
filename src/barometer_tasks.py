@@ -669,13 +669,13 @@ def update_barometer(save=False):
 #     # print(data1Test)
     requests.post(os.environ.get('API') + "v2/baro/",
                   json=data, headers=headers)
-    result = databases.create_document(
-        collection_id=os.environ.get('APPWRITE_BAROMETERID'),
-        database_id=os.environ.get('APPWRITE_DATABASEID'),
-        document_id="unique()",
-        data=data
-        )
-    return result
+    # result = databases.create_document(
+    #     collection_id=os.environ.get('APPWRITE_BAROMETERID'),
+    #     database_id=os.environ.get('APPWRITE_DATABASEID'),
+    #     document_id="unique()",
+    #     data=data
+    #     )
+    return
 #     # insertBaroData(baroData=data)
 #     # baroTable = Baro(date=dateNow,
 #     #                  fiatBtcVolume=total_btc_fiat_volume,

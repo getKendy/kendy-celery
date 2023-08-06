@@ -183,13 +183,13 @@ def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame,base,qu
                 requests.post(os.environ.get('API') + "v2/alert/",
                                 json=data, headers=headers)
                 # candle_alert(data=data)
-                result = databases.create_document(
-                collection_id=os.environ.get('APPWRITE_ALERTID'),
-                database_id=os.environ.get('APPWRITE_DATABASEID'),
-                document_id="unique()",
-                data=data
-                )
-                return result
+                # result = databases.create_document(
+                # collection_id=os.environ.get('APPWRITE_ALERTID'),
+                # database_id=os.environ.get('APPWRITE_DATABASEID'),
+                # document_id="unique()",
+                # data=data
+                # )
+                return
     except TypeError as error:
         print({'typeError':error})
     except KeyError as error:

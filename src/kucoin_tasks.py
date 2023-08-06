@@ -150,6 +150,7 @@ def save_tickers(tickers):
     if len(all_tickers) >= 1:
         token = get_fastapi_token()
         # print(token)
+        # print(type(token))
         headers = {
             "Authorization": token['token_type'] + " " + token['access_token'],
             "Content-Type": "application/json",
