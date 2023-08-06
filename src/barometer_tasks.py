@@ -660,7 +660,7 @@ def update_barometer(save=False):
     print(token)
     print(type(token))
     headers = {
-        "Authorization": token['token_type'] + " " + token['access_token'],
+        "Authorization": token['jwt']['token_type'] + " " + token['jwt']['access_token'],
         "Content-Type": "application/json",
         "accept": "application/json"
     }

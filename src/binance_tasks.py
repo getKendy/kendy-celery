@@ -323,7 +323,7 @@ def save_tickers(tickers):
     # enf for loop
     token = get_fastapi_token()
     headers = {
-        "Authorization": token['token_type'] + " " + token['access_token'],
+        "Authorization": token['jwt']['token_type'] + " " + token['jwt']['access_token'],
         "Content-Type": "application/json",
         "accept": "application/json"
     }
@@ -344,7 +344,7 @@ def clean_old_tickers():
     # while cleaning:
     token = get_fastapi_token()
     headers = {
-        "Authorization": token['token_type'] + " " + token['access_token'],
+        "Authorization": token['jwt']['token_type'] + " " + token['jwt']['access_token'],
         "Content-Type": "application/json",
         "accept": "application/json"
     }
@@ -363,7 +363,7 @@ def clean_old_alerts():
     # while cleaning:
     token = get_fastapi_token()
     headers = {
-        "Authorization": token['token_type'] + " " + token['access_token'],
+        "Authorization": token['jwt']['token_type'] + " " + token['jwt']['access_token'],
         "Content-Type": "application/json",
         "accept": "application/json"
     }

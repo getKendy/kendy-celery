@@ -171,7 +171,7 @@ def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame,base,qu
                         
                 token = get_fastapi_token()
                 headers = {
-                    "Authorization": token['token_type'] + " " + token['access_token'],
+                    "Authorization": token['jwt']['token_type'] + " " + token['jwt']['access_token'],
                     "Content-Type": "application/json",
                     "accept": "application/json"
                 }
