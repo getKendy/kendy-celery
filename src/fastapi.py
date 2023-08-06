@@ -26,5 +26,7 @@ def get_fastapi_token():
     if not token:
         return set_fastapi_token(os.environ.get('API_USER'), os.environ.get('API_PASSWORD'))
     token = json.loads(token)
+    if token['access_token'] == 'ERROR':
+        return set_fastapi_token(os.environ.get('API_USER'), os.environ.get('API_PASSWORD'))
     # print({ "token": token })
     return token
