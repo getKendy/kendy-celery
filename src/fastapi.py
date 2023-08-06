@@ -28,5 +28,3 @@ def get_fastapi_token():
     token = json.loads(token)
     # print({ "token": token })
     return token
-
-  
