@@ -149,6 +149,8 @@ def save_tickers(tickers):
     # enf for loop
     if len(all_tickers) >= 1:
         token = get_fastapi_token()
+        if not token:
+            return "no JWT"
         # print(token)
         # print(type(token))
         headers = {

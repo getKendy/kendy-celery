@@ -321,7 +321,10 @@ def save_tickers(tickers):
             }
         )
     # enf for loop
+    r.set("BinanceTickerRunning", "1", 120)
     token = get_fastapi_token()
+    if not token:
+        return "no JWT"
     headers = {
         "Authorization": token['jwt']['token_type'] + " " + token['jwt']['access_token'],
         "Content-Type": "application/json",
@@ -331,7 +334,6 @@ def save_tickers(tickers):
     if len(all_tickers) >= 1:
         requests.post(
             os.environ.get('API') + "v2/tickers/", json=all_tickers, headers=headers)
-    r.set("BinanceTickerRunning", "1", 120)
 
 
 
@@ -343,6 +345,8 @@ def clean_old_tickers():
     # cleaning = True
     # while cleaning:
     token = get_fastapi_token()
+    if not token:
+        return "no JWT"
     headers = {
         "Authorization": token['jwt']['token_type'] + " " + token['jwt']['access_token'],
         "Content-Type": "application/json",
@@ -352,7 +356,7 @@ def clean_old_tickers():
         os.environ.get('API') + 'v2/tickerexpired/2', headers=headers)
     if not response:
         return 'error'
-    data = response.json()
+    return response.json()
     
 @app.task
 def clean_old_alerts():
@@ -362,6 +366,8 @@ def clean_old_alerts():
     # cleaning = True
     # while cleaning:
     token = get_fastapi_token()
+    if not token:
+        return "no JWT"
     headers = {
         "Authorization": token['jwt']['token_type'] + " " + token['jwt']['access_token'],
         "Content-Type": "application/json",
@@ -371,4 +377,4 @@ def clean_old_alerts():
         os.environ.get('API') + 'v2/alertexpired/24', headers=headers)
     if not response:
         return 'error'
-    data = response.json()
+    return response.json()

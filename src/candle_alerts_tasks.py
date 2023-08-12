@@ -71,6 +71,8 @@ def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame,base,qu
     try:
         token = get_fastapi_token()
         # print(token)
+        if not token:
+            return "no JWT"
         headers = {
             "Authorization": token['jwt']['token_type'] + " " + token['jwt']['access_token'],
             "Content-Type": "application/json",
@@ -170,6 +172,8 @@ def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame,base,qu
                 # print(data)
                         
                 token = get_fastapi_token()
+                if not token:
+                    return "no JWT"
                 # print(token)
                 # print(type(token))
                 headers = {
@@ -233,7 +237,7 @@ def binance_trend_24h_check(baseAsset,quoteAsset):
     # if ticker['o'] > ticker['c']:
     #     return str(perc) + '%'
     # else:
-    return str(perc) + '%'
+    return perc
 
 
 @app.task
@@ -246,5 +250,5 @@ def kucoin_trend_24h_check(baseAsset,quoteAsset):
     # if ticker['open'] > ticker['close']:
     #     return str(perc) + '%'
     # else:
-    return str(perc) + '%'
+    return perc
 

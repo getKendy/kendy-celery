@@ -659,6 +659,8 @@ def update_barometer(save=False):
     token = get_fastapi_token()
     # print(token)
     # print(type(token))
+    if not token:
+        return "no JWT"
     headers = {
         "Authorization": token['jwt']['token_type'] + " " + token['jwt']['access_token'],
         "Content-Type": "application/json",
@@ -747,6 +749,8 @@ def get_database_price_for_pair(pair):
         # connect(host=MONGO_URL)
         token = get_fastapi_token()
         # print(token)
+        if not token:
+            return 0
         headers = {
             "Authorization": token['token_type'] + " " + token['access_token'],
             "Content-Type": "application/json",
@@ -774,4 +778,4 @@ def get_database_price_for_pair(pair):
     except IndexError:
         # print("Index error")
         price = 0
-    return price
+    # return price
