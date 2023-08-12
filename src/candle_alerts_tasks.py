@@ -191,7 +191,7 @@ def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame,base,qu
                 # document_id="unique()",
                 # data=data
                 # )
-                return
+                return data
     except TypeError as error:
         print({'typeError':error})
     except KeyError as error:
