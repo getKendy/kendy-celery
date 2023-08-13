@@ -212,8 +212,8 @@ def miniticker_message_handler(message):
                             {
                                 "symbol": tick["s"],
                                 # "market": symbol["symbol"],
-                                "market": symbol["baseAsset"] + '-' + symbol["quoteAsset"],
-                                # "market": tick['s'],
+                                # "market": symbol["baseAsset"] + '-' + symbol["quoteAsset"],
+                                "market": tick['s'],
                                 "c": tick["c"],
                                 "o": tick["o"],
                                 "h": tick["h"],

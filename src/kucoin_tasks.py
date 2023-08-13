@@ -39,7 +39,7 @@ def get_symbols_from_exchangeinfo():
 def ticker24h():
     exchange_info = kuclient.get_all_tickers()
     for tick in exchange_info['ticker']:
-        print(tick)
+        # print(tick)
         if tick['changePrice'] is not None:
             symbol = tick['symbol'].split('-')[0] + tick['symbol'].split('-')[1]
             data = {
