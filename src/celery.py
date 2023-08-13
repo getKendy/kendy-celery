@@ -95,6 +95,21 @@ app.conf.beat_schedule = {
         "schedule": crontab(minute="*/5"),
         "kwargs": ({"timeframe":"5m","resample_frame":"5T","exchange":"kucoin"}),
     },
+    "build_ku_indicators_from_15m_candles": {
+        "task": "src.candle_alerts_tasks.build_indicators_from_candles",
+        "schedule": crontab(minute="*/15"),
+        "kwargs": ({"timeframe":"15m","resample_frame":"15T","exchange":"kucoin"}),
+    },
+    "build_ku_indicators_from_30m_candles": {
+        "task": "src.candle_alerts_tasks.build_indicators_from_candles",
+        "schedule": crontab(minute="*/30"),
+        "kwargs": ({"timeframe":"30m","resample_frame":"30T","exchange":"kucoin"}),
+    },
+    "build_ku_indicators_from_60m_candles": {
+        "task": "src.candle_alerts_tasks.build_indicators_from_candles",
+        "schedule": crontab(minute="0"),
+        "kwargs": ({"timeframe":"60m","resample_frame":"60T","exchange":"kucoin"}),
+    },
     "build_indicators_from_1m_candles": {
         "task": "src.candle_alerts_tasks.build_indicators_from_candles",
         "schedule": crontab(minute="*"),
