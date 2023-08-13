@@ -8,6 +8,7 @@ from kucoin.ws_client import KucoinWsClient
 import asyncio
 import time
 from .fastapi import get_fastapi_token
+
 kuclient = Market(url='https://api.kucoin.com')
 
 collected_tickers = []
@@ -38,7 +39,7 @@ def get_symbols_from_exchangeinfo():
 def ticker24h():
     exchange_info = kuclient.get_all_tickers()
     for tick in exchange_info['ticker']:
-        # print(tick)
+        print(tick)
         if tick['changePrice'] is not None:
             symbol = tick['symbol'].split('-')[0] + tick['symbol'].split('-')[1]
             data = {
