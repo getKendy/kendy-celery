@@ -155,7 +155,7 @@ def save_tickers(tickers):
         # print(token)
         # print(type(token))
         headers = {
-            "Authorization": token['jwt']['token_type'] + " " + token['jwt']['access_token'],
+            "Authorization": token['token_type'] + " " + token['access_token'],
             "Content-Type": "application/json",
             "accept": "application/json"
         }

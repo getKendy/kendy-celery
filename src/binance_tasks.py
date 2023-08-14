@@ -326,7 +326,7 @@ def save_tickers(tickers):
     if not token:
         return "no JWT"
     headers = {
-        "Authorization": token['jwt']['token_type'] + " " + token['jwt']['access_token'],
+        "Authorization": token['token_type'] + " " + token['access_token'],
         "Content-Type": "application/json",
         "accept": "application/json"
     }
@@ -348,7 +348,7 @@ def clean_old_tickers():
     if not token:
         return "no JWT"
     headers = {
-        "Authorization": token['jwt']['token_type'] + " " + token['jwt']['access_token'],
+        "Authorization": token['token_type'] + " " + token['access_token'],
         "Content-Type": "application/json",
         "accept": "application/json"
     }
@@ -369,7 +369,7 @@ def clean_old_alerts():
     if not token:
         return "no JWT"
     headers = {
-        "Authorization": token['jwt']['token_type'] + " " + token['jwt']['access_token'],
+        "Authorization": token['token_type'] + " " + token['access_token'],
         "Content-Type": "application/json",
         "accept": "application/json"
     }

@@ -7,7 +7,7 @@ import os
 import requests
 import json
 # import socketio
-from .fastapi import get_fastapi_token
+from .fastapi import get_fastapi_trading_token
 
 binance_redis = redis.Redis(host=os.environ.get('REDIS_CACHE'),
                 port=os.environ.get('REDIS_PORT'),
@@ -69,7 +69,7 @@ def build_indicators_from_candles(timeframe,resample_frame,exchange):
 def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame,base,quote,exchange):
     '''process alert ticker data'''
     try:
-        token = get_fastapi_token()
+        token = get_fastapi_trading_token()
         # print(token)
         if not token:
             return "no JWT"
@@ -171,7 +171,7 @@ def process_alert_ticker_data(market,volume_24h,timeframe,resample_frame,base,qu
                 
                 # print(data)
                         
-                token = get_fastapi_token()
+                token = get_fastapi_trading_token()
                 if not token:
                     return "no JWT"
                 # print(token)

@@ -657,12 +657,12 @@ def update_barometer(save=False):
 #         "altBnbStrength": bnb_strength,
 #     }
     token = get_fastapi_token()
-    # print(token)
-    # print(type(token))
+    print(token)
+    print(type(token))
     if not token:
         return "no JWT"
     headers = {
-        "Authorization": token['jwt']['token_type'] + " " + token['jwt']['access_token'],
+        "Authorization": token['token_type'] + " " + token['access_token'],
         "Content-Type": "application/json",
         "accept": "application/json"
     }
